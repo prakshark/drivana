@@ -15,10 +15,33 @@ let eyeClosedStartTime = null;
 const EYE_CLOSED_THRESHOLD = 3; // seconds
 const EYE_ASPECT_RATIO_THRESHOLD = 0.25; // Threshold for eye closure
 const HAND_NEAR_FACE_THRESHOLD = 150; // pixels
+let currentFactIndex = 0;
+const facts = document.querySelectorAll('.fact');
+const FACT_DISPLAY_TIME = 3000; // 3 seconds
+
+// Get DOM elements
+const loadingContainer = document.querySelector('.loading-container');
+const videoContainer = document.querySelector('.video-container');
+
+function rotateFacts() {
+    // Hide current fact
+    facts[currentFactIndex].classList.remove('active');
+    
+    // Move to next fact
+    currentFactIndex = (currentFactIndex + 1) % facts.length;
+    
+    // Show new fact
+    facts[currentFactIndex].classList.add('active');
+}
+
+// Start rotating facts
+const factInterval = setInterval(rotateFacts, FACT_DISPLAY_TIME);
 
 async function setup() {
     try {
         console.log('Starting setup...');
+        statusElement = document.getElementById('status');
+        statusElement.textContent = 'Loading AI Models...';
         
         // Initialize DOM elements
         video = document.getElementById('video');
@@ -28,28 +51,10 @@ async function setup() {
         drowsyAlert = document.getElementById('drowsyAlert');
         phoneAlert = document.getElementById('phoneAlert');
         eatingAlert = document.getElementById('eatingAlert');
-        statusElement = document.getElementById('status');
-
-        console.log('DOM elements initialized');
 
         // Add click handlers for alert buttons
         document.querySelectorAll('.awake-button').forEach(button => {
             button.addEventListener('click', resetAlerts);
-        });
-        console.log('Button event listeners added');
-
-        // Initialize video stream
-        console.log('Requesting camera access...');
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        video.srcObject = stream;
-        console.log('Camera access granted');
-
-        // Wait for video to be ready
-        await new Promise((resolve) => {
-            video.onloadedmetadata = () => {
-                console.log('Video metadata loaded');
-                resolve();
-            };
         });
 
         // Initialize face landmarks detection
@@ -68,6 +73,26 @@ async function setup() {
         handposeModel = await handpose.load();
         console.log('Handpose model loaded');
 
+        // Initialize video stream
+        console.log('Requesting camera access...');
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = stream;
+
+        // Wait for video to be ready
+        await new Promise((resolve) => {
+            video.onloadedmetadata = () => {
+                console.log('Video metadata loaded');
+                resolve();
+            };
+        });
+
+        // Stop rotating facts
+        clearInterval(factInterval);
+        
+        // Hide loading container and show video
+        loadingContainer.classList.add('hidden');
+        videoContainer.classList.remove('hidden');
+        
         modelReady();
         console.log('Setup completed successfully');
 
@@ -76,6 +101,8 @@ async function setup() {
     } catch (error) {
         console.error('Error during setup:', error);
         statusElement.textContent = `Error: ${error.message}`;
+        loadingContainer.querySelector('.loading-text').textContent = 'Error loading models. Please refresh the page.';
+        clearInterval(factInterval);
     }
 }
 
@@ -298,6 +325,8 @@ function triggerDrowsyAlert() {
     console.log('Triggering drowsy alert');
     isDrowsy = true;
     drowsyAlert.classList.remove('hidden');
+    drowsyAlert.classList.add('active');
+    videoContainer.classList.add('alert-active');
     alarm.play();
     statusElement.textContent = 'Drowsiness Detected!';
 }
@@ -306,6 +335,8 @@ function triggerPhoneAlert() {
     console.log('Triggering phone alert');
     isUsingPhone = true;
     phoneAlert.classList.remove('hidden');
+    phoneAlert.classList.add('active');
+    videoContainer.classList.add('alert-active');
     alarm.play();
     statusElement.textContent = 'Phone Use Detected!';
 }
@@ -314,6 +345,8 @@ function triggerEatingAlert() {
     console.log('Triggering eating alert');
     isEating = true;
     eatingAlert.classList.remove('hidden');
+    eatingAlert.classList.add('active');
+    videoContainer.classList.add('alert-active');
     alarm.play();
     statusElement.textContent = 'Eating Detected!';
 }
@@ -327,6 +360,12 @@ function resetAlerts() {
     drowsyAlert.classList.add('hidden');
     phoneAlert.classList.add('hidden');
     eatingAlert.classList.add('hidden');
+    
+    drowsyAlert.classList.remove('active');
+    phoneAlert.classList.remove('active');
+    eatingAlert.classList.remove('active');
+    
+    videoContainer.classList.remove('alert-active');
     
     alarm.pause();
     alarm.currentTime = 0;

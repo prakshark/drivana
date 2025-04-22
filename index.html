@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SleepyGuard - Drowsiness Detection</title>
+    <title>Drivana - Driver Monitoring System</title>
     <link rel="stylesheet" href="styles.css">
     <!-- Load TensorFlow.js -->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
@@ -13,11 +13,34 @@
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/face-landmarks-detection"></script>
     <!-- Load Handpose model -->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/handpose@0.0.6"></script>
+    <!-- Load Ubuntu font -->
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
-        <h1>SleepyGuard</h1>
-        <div class="video-container">
+        <div class="title-container">
+            <h1 class="title">Drivana</h1>
+            <p class="subtitle">Your Driving Nirvana</p>
+        </div>
+        <div class="loading-container">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">Loading AI Models...</p>
+            <div class="facts-container">
+                <div class="fact active">
+                    <p>Every year, drowsy driving causes approximately 100,000 crashes in the US alone.</p>
+                </div>
+                <div class="fact">
+                    <p>Using a phone while driving makes you 4 times more likely to be in a crash.</p>
+                </div>
+                <div class="fact">
+                    <p>Eating while driving increases the risk of an accident by 80%.</p>
+                </div>
+                <div class="fact">
+                    <p>21% of fatal crashes involve distracted driving.</p>
+                </div>
+            </div>
+        </div>
+        <div class="video-container hidden">
             <video id="video" width="640" height="480" autoplay></video>
             <canvas id="canvas" width="640" height="480"></canvas>
         </div>
