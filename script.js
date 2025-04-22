@@ -172,12 +172,16 @@ function detectHandGesture(hand) {
 
     // Eating detection logic:
     // All fingers should be curled towards the palm
+    // Calculate average distance of all fingers from palm center
+    const avgFingerDistance = (thumbDistance + indexDistance + middleDistance + ringDistance + pinkyDistance) / 5;
+    const maxFingerDistance = Math.max(thumbDistance, indexDistance, middleDistance, ringDistance, pinkyDistance);
+    
+    // Eating is detected when:
+    // 1. All fingers are close to palm (average distance < 70)
+    // 2. No finger is significantly extended (max distance < 90)
     const isEatingGesture = 
-        thumbDistance < 80 &&
-        indexDistance < 80 &&
-        middleDistance < 80 &&
-        ringDistance < 80 &&
-        pinkyDistance < 80;
+        avgFingerDistance < 70 &&
+        maxFingerDistance < 90;
 
     console.log('Gesture detection:', {
         thumbDistance: thumbDistance.toFixed(1),
@@ -185,6 +189,8 @@ function detectHandGesture(hand) {
         middleDistance: middleDistance.toFixed(1),
         ringDistance: ringDistance.toFixed(1),
         pinkyDistance: pinkyDistance.toFixed(1),
+        avgFingerDistance: avgFingerDistance.toFixed(1),
+        maxFingerDistance: maxFingerDistance.toFixed(1),
         thumbPinkyAngle: thumbPinkyAngle.toFixed(2),
         thumbIndexAngle: thumbIndexAngle.toFixed(2),
         indexMiddleDiff: Math.abs(indexDistance - middleDistance).toFixed(1),
