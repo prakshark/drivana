@@ -136,31 +136,67 @@ function detectHandGesture(hand) {
 
     const landmarks = hand.landmarks;
 
-    // Check for phone-like gesture (thumb and pinky extended)
+    // Get key points for phone detection
     const thumbTip = landmarks[4];
-    const pinkyTipPhone = landmarks[20];
-    const thumbPinkyDistance = Math.hypot(
-        thumbTip[0] - pinkyTipPhone[0],
-        thumbTip[1] - pinkyTipPhone[1]
-    );
-
-    // Check for eating gesture (fingers curled)
     const indexTip = landmarks[8];
     const middleTip = landmarks[12];
     const ringTip = landmarks[16];
-    const pinkyTipEating = landmarks[20];
+    const pinkyTip = landmarks[20];
     const palmCenter = landmarks[0];
 
-    const fingersCurled = [indexTip, middleTip, ringTip, pinkyTipEating].every(tip => {
-        return Math.hypot(tip[0] - palmCenter[0], tip[1] - palmCenter[1]) < 100;
+    // Calculate distances between fingertips and palm center
+    const thumbDistance = Math.hypot(thumbTip[0] - palmCenter[0], thumbTip[1] - palmCenter[1]);
+    const indexDistance = Math.hypot(indexTip[0] - palmCenter[0], indexTip[1] - palmCenter[1]);
+    const middleDistance = Math.hypot(middleTip[0] - palmCenter[0], middleTip[1] - palmCenter[1]);
+    const ringDistance = Math.hypot(ringTip[0] - palmCenter[0], ringTip[1] - palmCenter[1]);
+    const pinkyDistance = Math.hypot(pinkyTip[0] - palmCenter[0], pinkyTip[1] - palmCenter[1]);
+
+    // Calculate angles between fingers
+    const thumbPinkyAngle = Math.atan2(pinkyTip[1] - thumbTip[1], pinkyTip[0] - thumbTip[0]);
+    const thumbIndexAngle = Math.atan2(indexTip[1] - thumbTip[1], indexTip[0] - thumbTip[0]);
+
+    // Phone detection logic:
+    // 1. Thumb should be extended (farther from palm)
+    // 2. Other fingers should be extended and roughly parallel
+    // 3. Fingers should form a roughly rectangular shape
+    const isPhoneGesture = 
+        thumbDistance > 100 && // Thumb extended
+        indexDistance > 120 && // Index finger extended
+        middleDistance > 120 && // Middle finger extended
+        ringDistance > 120 && // Ring finger extended
+        pinkyDistance > 120 && // Pinky finger extended
+        Math.abs(indexDistance - middleDistance) < 40 && // Fingers roughly parallel
+        Math.abs(middleDistance - ringDistance) < 40 &&
+        Math.abs(ringDistance - pinkyDistance) < 40 &&
+        Math.abs(thumbPinkyAngle - thumbIndexAngle) < 0.8; // Fingers roughly aligned
+
+    // Eating detection logic:
+    // All fingers should be curled towards the palm
+    const isEatingGesture = 
+        thumbDistance < 80 &&
+        indexDistance < 80 &&
+        middleDistance < 80 &&
+        ringDistance < 80 &&
+        pinkyDistance < 80;
+
+    console.log('Gesture detection:', {
+        thumbDistance: thumbDistance.toFixed(1),
+        indexDistance: indexDistance.toFixed(1),
+        middleDistance: middleDistance.toFixed(1),
+        ringDistance: ringDistance.toFixed(1),
+        pinkyDistance: pinkyDistance.toFixed(1),
+        thumbPinkyAngle: thumbPinkyAngle.toFixed(2),
+        thumbIndexAngle: thumbIndexAngle.toFixed(2),
+        indexMiddleDiff: Math.abs(indexDistance - middleDistance).toFixed(1),
+        middleRingDiff: Math.abs(middleDistance - ringDistance).toFixed(1),
+        ringPinkyDiff: Math.abs(ringDistance - pinkyDistance).toFixed(1)
     });
 
-    console.log(`Thumb-Pinky distance: ${thumbPinkyDistance.toFixed(1)}`);
-    console.log(`Fingers curled: ${fingersCurled}`);
-
-    if (thumbPinkyDistance > 150) {
+    if (isPhoneGesture) {
+        console.log('Phone gesture detected');
         return 'phone';
-    } else if (fingersCurled) {
+    } else if (isEatingGesture) {
+        console.log('Eating gesture detected');
         return 'eating';
     }
     return null;
