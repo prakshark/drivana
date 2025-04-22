@@ -53,13 +53,21 @@ canvas {
     animation: pulse 1s infinite;
 }
 
+.alert.phone {
+    background-color: #ff9800;
+}
+
+.alert.eating {
+    background-color: #4caf50;
+}
+
 .alert.hidden {
     display: none;
 }
 
 .awake-button {
     background-color: white;
-    color: #ff4444;
+    color: inherit;
     border: none;
     padding: 0.5rem 1rem;
     border-radius: 4px;
@@ -67,6 +75,18 @@ canvas {
     margin-top: 1rem;
     cursor: pointer;
     transition: all 0.3s ease;
+}
+
+.alert .awake-button {
+    color: #ff4444;
+}
+
+.alert.phone .awake-button {
+    color: #ff9800;
+}
+
+.alert.eating .awake-button {
+    color: #4caf50;
 }
 
 .awake-button:hover {
