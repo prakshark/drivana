@@ -7,6 +7,7 @@
     --alert-color: #FF5252;
     --border-color: #333333;
     --font-family: 'Ubuntu', sans-serif;
+    --glow-color: #FFD700;
 }
 
 * {
@@ -39,6 +40,20 @@ body {
 .title-container {
     margin-bottom: 2rem;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.logo {
+    max-width: 300px;
+    width: 100%;
+    height: auto;
+    transition: all 0.3s ease;
+}
+
+.logo:hover {
+    transform: scale(1.05);
 }
 
 .title {
@@ -56,15 +71,41 @@ body {
     color: var(--text-color);
     opacity: 0.8;
     font-weight: 500;
+    text-shadow: 0 0 10px var(--glow-color);
+    position: relative;
+    z-index: 1;
 }
 
 .video-container {
     position: relative;
-    margin: 0 auto;
+    margin: 2rem auto;
     border-radius: 0.5rem;
     overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-    transition: opacity 0.5s ease-in-out, box-shadow 0.5s ease;
+    box-shadow: 0 0 20px var(--glow-color),
+                0 0 40px rgba(33, 150, 243, 0.2);
+    transition: all 0.3s ease;
+    width: 640px;
+    height: 480px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    aspect-ratio: 4/3;
+    border: var(--tech-border);
+    background: linear-gradient(45deg, rgba(33, 150, 243, 0.1), rgba(76, 175, 80, 0.1));
+}
+
+video, canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+canvas {
+    z-index: 2;
 }
 
 .video-container.hidden {
@@ -73,12 +114,8 @@ body {
 }
 
 .video-container.alert-active {
-    animation: blink 1s infinite;
-}
-
-video, canvas {
-    display: block;
-    border-radius: 0.5rem;
+    animation: techBlink 0.5s infinite;
+    border-color: var(--alert-color);
 }
 
 .loading-container {
