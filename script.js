@@ -59,28 +59,51 @@ async function setup() {
 
         // Initialize face landmarks detection
         console.log('Loading face landmarks model...');
+        statusElement.textContent = 'Loading Face Detection Model...';
         model = await faceLandmarksDetection.createDetector(
             faceLandmarksDetection.SupportedModels.MediaPipeFaceMesh,
             {
                 runtime: 'tfjs',
                 refineLandmarks: true
             }
-        );
+        ).catch(error => {
+            console.error('Error loading face landmarks model:', error);
+            throw new Error('Failed to load face detection model. Please refresh the page.');
+        });
         console.log('Face landmarks model loaded');
 
         // Initialize handpose
         console.log('Loading handpose model...');
-        handposeModel = await handpose.load();
+        statusElement.textContent = 'Loading Hand Detection Model...';
+        handposeModel = await handpose.load().catch(error => {
+            console.error('Error loading handpose model:', error);
+            throw new Error('Failed to load hand detection model. Please refresh the page.');
+        });
         console.log('Handpose model loaded');
 
         // Initialize video stream
         console.log('Requesting camera access...');
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        statusElement.textContent = 'Requesting Camera Access...';
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+            video: { 
+                width: { ideal: 640 },
+                height: { ideal: 480 },
+                facingMode: 'user'
+            } 
+        }).catch(error => {
+            console.error('Error accessing camera:', error);
+            throw new Error('Camera access denied. Please allow camera access to use this application.');
+        });
         video.srcObject = stream;
 
         // Wait for video to be ready
-        await new Promise((resolve) => {
+        await new Promise((resolve, reject) => {
+            const timeout = setTimeout(() => {
+                reject(new Error('Video initialization timed out. Please refresh the page.'));
+            }, 10000); // 10 second timeout
+
             video.onloadedmetadata = () => {
+                clearTimeout(timeout);
                 console.log('Video metadata loaded');
                 resolve();
             };
@@ -101,7 +124,7 @@ async function setup() {
     } catch (error) {
         console.error('Error during setup:', error);
         statusElement.textContent = `Error: ${error.message}`;
-        loadingContainer.querySelector('.loading-text').textContent = 'Error loading models. Please refresh the page.';
+        loadingContainer.querySelector('.loading-text').textContent = error.message;
         clearInterval(factInterval);
     }
 }

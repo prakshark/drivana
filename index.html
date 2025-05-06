@@ -5,14 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Drivana - Driver Monitoring System</title>
     <link rel="stylesheet" href="styles.css">
-    <!-- Load TensorFlow.js -->
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
-    <!-- Load ML5.js -->
-    <script src="https://unpkg.com/ml5@0.12.2/dist/ml5.min.js"></script>
-    <!-- Load Facemesh model -->
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/face-landmarks-detection"></script>
-    <!-- Load Handpose model -->
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/handpose@0.0.6"></script>
     <!-- Load Ubuntu font -->
     <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
@@ -63,6 +55,16 @@
         </div>
     </div>
     <audio id="alarm" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto" loop></audio>
+    
+    <!-- Load TensorFlow.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <!-- Load ML5.js -->
+    <script src="https://unpkg.com/ml5@0.12.2/dist/ml5.min.js"></script>
+    <!-- Load Facemesh model -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/face-landmarks-detection"></script>
+    <!-- Load Handpose model -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/handpose@0.0.6"></script>
+    <!-- Load your custom script last -->
     <script src="script.js"></script>
 </body>
 </html> 
