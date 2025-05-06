@@ -1,0 +1,16 @@
+{
+  "name": "drivana",
+  "version": "1.0.0",
+  "description": "Driver monitoring system for detecting drowsiness, phone use, and eating",
+  "main": "index.html",
+  "scripts": {
+    "start": "serve",
+    "build": "echo 'No build step required'"
+  },
+  "dependencies": {
+    "serve": "^14.2.1"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+} 
