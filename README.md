@@ -1,12 +1,14 @@
-# SleepyGuard - Drowsiness Detection System
+# Drivana - Driver Drowsiness Detection System
 
-SleepyGuard is a web-based application that uses ML5.js and computer vision to detect drowsiness or sleepiness in real-time. It monitors head movements and triggers an alert when signs of drowsiness are detected.
+Drivana is a web-based application that uses ML5.js and computer vision to detect drowsiness or sleepiness in real-time. It monitors head movements and triggers an alert when signs of drowsiness are detected.
 
 ## Features
 
 - Real-time face detection using ML5.js Facemesh
 - Drowsiness detection based on head tilt
-- Visual and audio alerts when drowsiness is detected
+- Mobile Usage Detection
+- Eating Detection
+- Visual and audio alerts when drowsiness, Eating, or Mobile Usage is detected
 - Modern and responsive UI
 - Works in any modern web browser
 
